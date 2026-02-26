@@ -1,4 +1,4 @@
-package com.example.todos.Entity;
+package com.example.todos.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

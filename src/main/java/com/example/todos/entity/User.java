@@ -1,4 +1,4 @@
-package com.example.todos.Entity;
+package com.example.todos.entity;
 
 import java.time.LocalDate;
 import java.util.List;
