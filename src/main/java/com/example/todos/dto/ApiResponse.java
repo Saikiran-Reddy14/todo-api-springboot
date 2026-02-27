@@ -8,10 +8,10 @@ import lombok.Builder;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ApiRespone<T>(
-        String message,
-        int status,
-        T data,
-        LocalDateTime timestamp) {
+public record ApiResponse<T>(
+                String message,
+                int status,
+                T data,
+                LocalDateTime timestamp) {
 
 }
