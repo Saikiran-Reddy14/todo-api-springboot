@@ -1,4 +1,4 @@
-package com.example.todos.Repo;
+package com.example.todos.repo;
 
 import java.util.Optional;
 
