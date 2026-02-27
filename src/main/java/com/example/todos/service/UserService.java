@@ -1,12 +1,11 @@
 package com.example.todos.service;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.todos.dto.RegisterReq;
 import com.example.todos.entity.User;
+import com.example.todos.exception.ResourceExists;
 import com.example.todos.repo.UserRepo;
 
 import lombok.RequiredArgsConstructor;
@@ -20,11 +19,11 @@ public class UserService {
 
     public void registerUser(RegisterReq request) {
         if (userRepo.existsByEmail(request.email())) {
-            throw new RuntimeException("Email already exists");
+            throw new ResourceExists("Email already exists");
         }
 
         if (userRepo.existsByUsername(request.username())) {
-            throw new RuntimeException("Username already exists");
+            throw new ResourceExists("Username already exists");
         }
         User user = User.builder()
                 .email(request.email())
