@@ -16,6 +16,7 @@ import com.example.todos.dto.LoginReq;
 import com.example.todos.dto.LoginRes;
 import com.example.todos.dto.RefreshTokenReq;
 import com.example.todos.dto.RegisterReq;
+import com.example.todos.exception.InvalidBody;
 import com.example.todos.service.UserService;
 
 import jakarta.validation.Valid;
@@ -62,16 +63,25 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(Authentication authentication,
+    public ResponseEntity<ApiResponse<String>> logout(
+            Authentication authentication,
             @RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new InvalidBody("Invalid Authorization header");
+        }
+
         String token = authHeader.substring(7);
+
         userService.logoutUser(authentication.getName(), token);
-        return ResponseEntity.ok(ApiResponse.<String>builder()
-                .message("Logged out successfully")
-                .status(200)
-                .data(null)
-                .timestamp(LocalDateTime.now())
-                .build());
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .message("Logged out successfully")
+                        .status(200)
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build());
     }
 
 }
