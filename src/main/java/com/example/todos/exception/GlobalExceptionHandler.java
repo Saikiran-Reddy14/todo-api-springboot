@@ -22,6 +22,15 @@ import jakarta.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(InvalidBody.class)
+    public ResponseEntity<ApiResponse<Object>> handleInvalidBody(InvalidBody ex) {
+        ApiResponse<Object> response = ApiResponse.builder().message(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .data(null)
+                .timestamp(LocalDateTime.now()).build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new LinkedHashMap<>();
