@@ -6,10 +6,11 @@ import lombok.Builder;
 
 @Builder
 public record TodoPagination(
-        List<TodoRes> todos,
-        Integer pageNumber,
-        Integer pageSize,
-        Integer totalPages,
-        Long totalElements) {
+                List<TodoRes> todos,
+                Integer pageNumber,
+                Integer pageSize,
+                Integer totalPages,
+                Long totalElements,
+                Boolean hasNext) {
 
 }
