@@ -14,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.todos.dto.LoginReq;
 import com.example.todos.dto.LoginRes;
 import com.example.todos.dto.RegisterReq;
+import com.example.todos.entity.BlacklistedToken;
 import com.example.todos.entity.RefreshToken;
 import com.example.todos.entity.User;
 import com.example.todos.exception.ResourceExists;
 import com.example.todos.exception.ResourceNotFound;
+import com.example.todos.repo.BlacklistedTokenRepo;
 import com.example.todos.repo.RefreshTokenRepo;
 import com.example.todos.repo.UserRepo;
 import com.example.todos.utils.JwtUtils;
@@ -30,9 +32,13 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final RefreshTokenRepo refreshTokenRepo;
+    private final BlacklistedTokenRepo blacklistedTokenRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+
+    @Value("${jwt.accessTokenExpiration}")
+    private long accessTokenExpiration;
 
     @Value("${jwt.refreshTokenExpiration}")
     private long refreshTokenExpiration;
@@ -111,10 +117,16 @@ public class UserService {
     }
 
     @Transactional
-    public void logoutUser(String username) {
+    public void logoutUser(String username, String accessToken) {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFound("User not found"));
         refreshTokenRepo.deleteByUser(user);
+
+        BlacklistedToken blacklistedToken = BlacklistedToken.builder()
+                .token(accessToken)
+                .expiryDate(LocalDateTime.now().plus(accessTokenExpiration, ChronoUnit.MILLIS))
+                .build();
+        blacklistedTokenRepo.save(blacklistedToken);
     }
 
 }

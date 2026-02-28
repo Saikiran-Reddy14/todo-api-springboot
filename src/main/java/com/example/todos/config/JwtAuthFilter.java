@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.todos.repo.BlacklistedTokenRepo;
 import com.example.todos.utils.JwtUtils;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,6 +29,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
 
     private final UserDetailsService userDetailsService;
+
+    private final BlacklistedTokenRepo blacklistedTokenRepo;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -51,7 +54,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                if (jwtUtils.validateToken(token, userDetails)) {
+                if (jwtUtils.validateToken(token, userDetails) && !blacklistedTokenRepo.existsByToken(token)) {
 
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,

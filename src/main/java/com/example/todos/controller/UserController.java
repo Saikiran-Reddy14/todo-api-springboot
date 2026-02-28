@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,8 +62,10 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(Authentication authentication) {
-        userService.logoutUser(authentication.getName());
+    public ResponseEntity<ApiResponse<String>> logout(Authentication authentication,
+            @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        userService.logoutUser(authentication.getName(), token);
         return ResponseEntity.ok(ApiResponse.<String>builder()
                 .message("Logged out successfully")
                 .status(200)
