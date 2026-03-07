@@ -67,6 +67,10 @@ public class UserController {
             Authentication authentication,
             @RequestHeader("Authorization") String authHeader) {
 
+        if (authentication == null || authentication.getName() == null) {
+            throw new InvalidBody("Authentication required");
+        }
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new InvalidBody("Invalid Authorization header");
         }

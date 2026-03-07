@@ -85,14 +85,12 @@ public class UserService {
     @Transactional
     public LoginRes refreshTokens(String refreshToken) {
 
-        String username = jwtUtils.extractUsername(refreshToken);
-
         RefreshToken storedToken = refreshTokenRepo.findByToken(refreshToken)
                 .orElseThrow(() -> new ResourceNotFound("Invalid refresh token"));
 
-        if (!username.equals(storedToken.getUser().getUsername())) {
+        if (!jwtUtils.validateRefreshToken(refreshToken, storedToken.getUser().getUsername())) {
             refreshTokenRepo.delete(storedToken);
-            throw new ResourceNotFound("Token mismatch. Please login again");
+            throw new ResourceNotFound("Invalid or expired refresh token. Please login again");
         }
 
         if (storedToken.isExpired()) {
